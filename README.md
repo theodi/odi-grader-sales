@@ -1,2 +1,2 @@
-# odi-grader-sales
-Autograder for basic data cleaning exercise
+# odi-grader-tanzania-basic
+Autograder for basic CSV cleaning exercise - Tanzania clinic data
