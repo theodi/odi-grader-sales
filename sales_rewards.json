@@ -1,0 +1,40 @@
+{
+	"fields": [
+		{
+			"title": "orderNumber",
+			"name": "Order ID",
+			"description": "A unique 5-digit numeric ID for the order.",
+			"constraints": {
+				"required": "true",
+				"type": "http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+			}
+		},
+		{
+			"title": "bookerName",
+			"name": "Booker",
+			"description": "Booker's full name as 'Firstname Lastname'",
+			"constraints": {
+				"required": "true",
+				"type": "http://www.w3.org/2001/XMLSchema#string"
+			}
+		},
+		{
+			"title": "orderValue",
+			"name": "Order value",
+			"description": "The value of the order in GBP including pounds and pence.",
+			"constraints": {
+				"required": "true",
+				"type": "http://www.w3.org/2001/XMLSchema#float"
+			}
+		},
+		{
+			"title": "rating",
+			"name": "Rating",
+			"description": "The satisfaction rating received from the cistomer for this order.",
+			"constraints": {
+				"required": "true",
+				"type": "http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+			}
+		}
+	]
+}
