@@ -33365,12 +33365,9 @@ var options = {
 var darkmode = new _darkmodeJs.default(options);
 darkmode.showWidget();
 var best = [{
-  "reg": "5 Mara",
-  "year": "2015",
-  "cou": "MUS DC",
-  "hf type": "Hospital",
-  "owner": "Public",
-  "hfr code": "101193-1",
+  "region": "Mara",
+  "facility type": "Hospital",
+  "ownership": "Public",
   "name of facility": "BUTIAMA HOSPITAL",
   "star rating": "2"
 }];
@@ -33390,7 +33387,8 @@ document.getElementById("import").onclick = function () {
   fr.onload = function (e) {
     //console.log('fetching file'); //ok
     (0, _csvtojson.default)().fromString(e.target.result).then(function (arr) {
-      var input = arr; //console.log(arr); // not ok, no values
+      var input = arr;
+      console.log(arr); // not ok, no values
 
       var col = [];
 
@@ -33435,14 +33433,15 @@ document.getElementById("import").onclick = function () {
       var counter = 0;
       var editedVersion;
       document.getElementById("result").addEventListener("input", function () {
-        //console.log("input event fired");
-        // log the new table header
+        console.log("input event fired"); // log the new table header
+
         editedVersion = table;
         counter += 1; //console.log(counter)
 
         var updatedTable = _htmlTableToJson.default.parse(table.outerHTML);
 
-        editedVersion = updatedTable.results; //console.log(editedVersion)
+        editedVersion = updatedTable.results;
+        console.log(editedVersion);
       }, false);
       var gradeTotal = 0;
 
@@ -33457,19 +33456,18 @@ document.getElementById("import").onclick = function () {
             var _i = _step.value;
 
             for (var _key in _i) {
-              if (_key === 'STAR RATING') {
+              if (_key === 'star rating') {
                 allStars.push(parseInt(_i[_key]));
-              } else {
-                (0, _cashDom.default)("#starRatings").text("✏️ Star ratings information not found in your file.");
               }
             }
-          } //console.log('allStars', allStars);
-
+          }
         } catch (err) {
           _iterator.e(err);
         } finally {
           _iterator.f();
         }
+
+        console.log('allStars', allStars);
 
         if (allStars.length > 0) {
           var median = function median(values) {
@@ -33489,21 +33487,22 @@ document.getElementById("import").onclick = function () {
           var meanStars = sumStars / allStars.length;
           var medStars = median(allStars);
 
-          var starType = _typeof(sumStars); //console.log('sum, mean, median: ', sumStars, meanStars, medStars);
+          var starType = _typeof(sumStars);
 
+          console.log('sum, mean, median: ', sumStars, meanStars, medStars);
 
-          if (sumStars === 348 && meanStars === 0.8207547169811321 && medStars === 1) {
-            (0, _cashDom.default)("#starRatings").text("✅ Star ratings are valid numeric values and return the correct analysis.");
-            gradeTotal += 2; //console.log('points: ', gradeTotal);
+          if (sumStars === 394 && meanStars === 1.2236024844720497 && medStars === 1) {
+            (0, _cashDom.default)("#starRatings").text("✅ Star ratings are numeric and agree with our calcuations. Two points awarded.");
+            gradeTotal += 2;
+            console.log('points: ', gradeTotal);
           } else if (isNaN(sumStars)) {
-            (0, _cashDom.default)("#starRatings").text("✏️ Star ratings could not be validated as the data contains non-numeric values.");
-            gradeTotal += 0; //console.log('points: ', gradeTotal);
-          } else if (sumStars != 348 && starType == "number") {
-            (0, _cashDom.default)("#starRatings").text("✏️ Star ratings failed validation.");
-            gradeTotal += 1; //console.log('points: ', gradeTotal);
-          } else {
-            (0, _cashDom.default)("#starRatings").text("✏️ Star ratings could not be validated.");
+            (0, _cashDom.default)("#starRatings").text("✏️ Star ratings could not be analysed. No points awarded.");
             gradeTotal += 0;
+            console.log('points: ', gradeTotal);
+          } else if (sumStars != 394 && starType == "number") {
+            (0, _cashDom.default)("#starRatings").text("✏️ Star ratings do not agree with our analysis. Only one point awarded.");
+            gradeTotal += 1;
+            console.log('points: ', gradeTotal);
           }
         }
       }
@@ -33522,7 +33521,7 @@ document.getElementById("import").onclick = function () {
 
             for (var _key2 in _i2) {
               //console.log(key);
-              if (_key2 === 'HF TYPE') {
+              if (_key2 === 'facility type') {
                 allTypes.push(_i2[_key2]);
               }
             }
@@ -33539,39 +33538,35 @@ document.getElementById("import").onclick = function () {
         }
 
         var listTypes = countUnique(allTypes);
-        var numTypes = listTypes.size; //console.log('Types', listTypes, numTypes);
+        var numTypes = listTypes.size;
+        console.log('Types', listTypes, numTypes);
 
         if (numTypes === 3) {
-          (0, _cashDom.default)("#facTypes").text("✅  There are 3 distinct facility types in your file.");
-          gradeTotal += 1; //console.log('points: ', gradeTotal);
-        } else if (numTypes !== 3) {
-          (0, _cashDom.default)("#facTypes").text("✏️ There should be 3 health facility types in your file.");
-          gradeTotal += 0; //console.log('points: ', gradeTotal);
-        } else {
-          (0, _cashDom.default)("#facTypes").text("✏️ Facility type categories could not be found in your file.");
-          gradeTotal += 0;
+          (0, _cashDom.default)("#facTypes").text("✅  There are 3 distinct facility types in the dataset. One point awarded.");
+          gradeTotal += 1;
+          console.log('points: ', gradeTotal);
         }
       }
 
       checkTypes(input);
 
-      function checkOwner(input) {
-        var allOwner = [];
+      function checkRegions(input) {
+        var allRegions = [];
 
         var _iterator3 = _createForOfIteratorHelper(input),
             _step3;
 
         try {
           for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-            var _i4 = _step3.value;
+            var _i3 = _step3.value;
 
-            for (var _key3 in _i4) {
+            for (var _key3 in _i3) {
               //console.log(key);
-              if (_key3 === 'OWNER') {
-                allOwner.push(_i4[_key3]);
+              if (_key3 === 'region') {
+                allRegions.push(_i3[_key3]);
               }
             }
-          } //console.log('allOwner', allOwner);
+          } //console.log('allRegions', allRegions);
 
         } catch (err) {
           _iterator3.e(err);
@@ -33583,111 +33578,28 @@ document.getElementById("import").onclick = function () {
           return new Set(iterable);
         }
 
-        var listOwner = countUnique(allOwner);
-        var ownChecker = 0;
-
-        for (var _i3 in allOwner) {
-          //console.log('own', own);
-          var own = allOwner[_i3];
-
-          if (typeof own === 'string') {
-            ownChecker += 1;
-          }
-        } //console.log('ownChecker', ownChecker);
-
-
-        var ownerType = _typeof(listOwner); //console.log('owners?', ownerType);
-
-
-        var numOwner = listOwner.size; //console.log('Owners', listOwner, numOwner);
-
-        if (numOwner === 4 && ownChecker === 424) {
-          (0, _cashDom.default)("#facOwner").text("✅  There are 4 distinct and descriptive ownership types in your file.");
-          gradeTotal += 2; //console.log('points: ', gradeTotal);
-        } else if (numOwner === 4) {
-          (0, _cashDom.default)("#facOwner").text("✏️ There are 4 distinct ownership categories in your file but they are not descriptive.");
-          gradeTotal += 1; //console.log('points: ', gradeTotal);
-        } else if (numOwner !== 4 && ownChecker === 424) {
-          (0, _cashDom.default)("#facOwner").text("✏️ There are ${numOwner} descriptive ownership types in your file but there should be 4.");
-          gradeTotal += 1; //console.log('points: ', gradeTotal);
-        } else if (numOwner !== 4 && ownChecker !== 424) {
-          (0, _cashDom.default)("#facOwner").text("✏️ Ownership types could not be validated.");
-          gradeTotal += 0; //console.log('points: ', gradeTotal);
-        }
-      }
-
-      checkOwner(input);
-
-      function checkRegions(input) {
-        var allRegions = [];
-
-        var _iterator4 = _createForOfIteratorHelper(input),
-            _step4;
-
-        try {
-          for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-            var _i6 = _step4.value;
-
-            for (var _key4 in _i6) {
-              //console.log(key);
-              if (_key4 === 'REG') {
-                allRegions.push(_i6[_key4]);
-              }
-            }
-          } //console.log('allRegions', allRegions);
-
-        } catch (err) {
-          _iterator4.e(err);
-        } finally {
-          _iterator4.f();
-        }
-
-        function countUnique(iterable) {
-          return new Set(iterable);
-        }
-
         var listRegions = countUnique(allRegions);
         var numRegions = listRegions.size;
-        var regionChecker = 0;
-
-        for (var _i5 in allRegions) {
-          var region = allRegions[_i5]; //console.log('region', region, typeof(region));
-
-          if (region == '05-Mar') {
-            regionChecker += 1;
-          }
-        } //console.log('region checker', regionChecker);
-        //console.log('Regions', listRegions, numRegions);
-
+        console.log('Regions', listRegions, numRegions);
 
         if (numRegions === 2) {
-          (0, _cashDom.default)("#regions").text("✅  There are 2 distinct regions in the file.");
-          gradeTotal += 1; //console.log('points: ', gradeTotal);
-        } else if (regionChecker !== 424) {
-          (0, _cashDom.default)("#regions").text("✏️ Some region values are invalid.");
-          gradeTotal += 0;
-        } else {
-          (0, _cashDom.default)("#regions").text("✏️ Regions could not be validated.");
-          gradeTotal += 0;
-        } // TODO add something here to check if this column includes a date e.g. 5 Mar
-
+          (0, _cashDom.default)("#regions").text("✅  There are 2 distinct regions in the dataset. One point awarded.");
+          gradeTotal += 1;
+          console.log('points: ', gradeTotal);
+        }
       }
 
       checkRegions(input);
 
       function checkRows(input) {
         var allRows = [];
-        var numRows = input.length; //console.log('numRows', numRows);
+        var numRows = input.length;
+        console.log('numRows', numRows);
 
-        if (numRows === 424) {
-          (0, _cashDom.default)("#rows").text("✅  All of the original unique data points have been preserved.");
-          gradeTotal += 1; //console.log('points: ', gradeTotal);
-        } else if (numRows > 424) {
-          (0, _cashDom.default)("#rows").text("✏️ Data points have not been correctly validated. Your file may contain duplicates or errors.");
-          gradeTotal += 0;
-        } else if (numRows < 424) {
-          (0, _cashDom.default)("#rows").text("✏️ Some of the original data points are missing from your file.");
-          gradeTotal += 0;
+        if (numRows === 322) {
+          (0, _cashDom.default)("#rows").text("✅  There are 322 rows in the dataset. One point awarded.");
+          gradeTotal += 1;
+          console.log('points: ', gradeTotal);
         }
       }
 
@@ -33709,11 +33621,10 @@ document.getElementById("import").onclick = function () {
 
       var baseArr = removeWords(keysRecommended);
       var userArr = removeWords(keysUsed);
-      var maxGrade = 7;
+      var maxGrade = 5;
       var gradePC = gradeTotal / maxGrade * 100;
-      var gradeRounded = gradePC.toFixed(1); //let gradeText = `You scored a total of ${gradeTotal} out of a possible ${maxGrade}. Your grade is ${gradeRounded}%`;
-
-      var gradeText = "Your grade is ".concat(gradeRounded, "%");
+      var gradeRounded = gradePC.toFixed(1);
+      var gradeText = "You scored a total of ".concat(gradeTotal, " out of a possible ").concat(maxGrade, ". Your grade is ").concat(gradeRounded, "%");
       (0, _cashDom.default)("#totalGrade").text(gradeText);
     });
   };
@@ -33748,7 +33659,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60187" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63334" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
