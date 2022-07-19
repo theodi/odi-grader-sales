@@ -1,4 +1,4 @@
-﻿Order ID,Customer,Booker,Ordered,Required by,Shipped,REGION,Country,Order value,Rating
+﻿OrderID,Customer,Booker,Ordered,Required,Shipped,REGION,Country,Value,Rating
 10248,VINET,Steven Buchanan,04/07/1996,01/08/1996,16/07/1996,Europe,France,£440.00 ,3*
 10249,TOMSP,Michael Suyama,05/07/1996,16/08/1996,10/07/1996,Europe ,Germany,"£1,863.40 ",
 10250,HANAR,[Deleted user],08-Jul-96,05/08/1996,12/07/1996,S. America,Brazil,"£1,813.00 ",4 stars

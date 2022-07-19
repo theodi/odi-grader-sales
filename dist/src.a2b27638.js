@@ -14101,21 +14101,22 @@ var ajv = new Ajv(); // options can be passed, e.g. {allErrors: true}
 
 var schema = {
   properties: {
-    foo: {
+    OrderID: {
+      type: "string"
+    },
+    Booker: {
+      type: "string"
+    },
+    Value: {
+      type: "float32"
+    },
+    Rating: {
       type: "int32"
     }
   },
-  optionalProperties: {
-    bar: {
-      type: "string"
-    }
-  }
+  additionalProperties: true
 };
-var serialize = ajv.compileSerializer(schema);
-var data = {
-  foo: 1,
-  bar: "abc"
-}; // fetch data
+var serialize = ajv.compileSerializer(schema); // fetch data
 
 var tableCols = [];
 
@@ -14134,9 +14135,10 @@ document.getElementById("import").onclick = function () {
   fr.onload = function (e) {
     //console.log('fetching file'); //ok
     (0, _csvtojson.default)().fromString(e.target.result).then(function (arr) {
-      var input = arr; //console.log("array contents: ", arr); // if not ok, no values
-      // need to reshape this as list of lists
+      var input = arr;
+      console.log("array contents: ", arr); // if not ok, no values
 
+      console.log("array contents 0: ", arr[0]);
       var col = [];
       var record = [];
       var tableData = [];
@@ -14151,13 +14153,31 @@ document.getElementById("import").onclick = function () {
           var key = Object.keys(record)[j];
           var value = record[key];
           recordVals.push(value);
-        } //console.log('values extracted: ', recordVals);
-
+        }
 
         tableData.push(recordVals);
       }
 
-      console.log('data', tableData);
+      console.log('table data', tableData);
+      console.log(arr.length);
+
+      for (var _i = 0; _i < arr.length; _i++) {
+        var validate = ajv.compile(schema); //const data = {foo: 1, bar: "abc"}
+
+        var valid = validate(arr[_i]);
+        if (!valid) console.log(validate.errors);
+        var msgs = document.getElementById("invalidMessages");
+        var colName = validate.errors[0]["instancePath"].slice(1);
+        var colType = validate.errors[0]["keyword"];
+        var problem = validate.errors[0]["message"];
+
+        if (colType === "type") {
+          msgs.textContent = "\"".concat(colName, "\" ").concat(colType, " ").concat(problem, ".");
+        } else if (validate.errors[0]["params"]["error"] === "missing") {
+          var missingCol = validate.errors[0]["params"]["missingProperty"];
+          msgs.textContent = "Cannot find required property \"".concat(missingCol, "\".");
+        }
+      }
 
       for (var i = 0; i < input.length; i++) {
         for (var key in input[i]) {
@@ -14165,8 +14185,7 @@ document.getElementById("import").onclick = function () {
             col.push(key);
           }
         }
-      } //console.log("cols", col);
-
+      }
 
       for (var i in col) {
         tableHeader.push({
@@ -14174,10 +14193,9 @@ document.getElementById("import").onclick = function () {
         });
       }
 
-      console.log('header', tableHeader);
       $(document).ready(function () {
         $('#example').DataTable({
-          "dom": '<"wrapper"iprt>',
+          "dom": '<"top"ip>rt<"clear">',
           data: tableData,
           // extract this from input file
           columns: tableHeader
@@ -14186,28 +14204,8 @@ document.getElementById("import").onclick = function () {
     });
   };
 
-  var myData = fr.readAsText(files.item(0)); //return myData;
+  var myData = fr.readAsText(files.item(0));
 };
-
-console.log(serialize(data));
-var parse = ajv.compileParser(schema);
-var json = '{"foo": 1, "bar": "abc"}';
-var invalidJson = '{"unknown": "abc"}';
-console.log("parse and log valid here", parseAndLog(json)); // logs {foo: 1, bar: "abc"}
-
-console.log("parse and log invalid here", parseAndLog(invalidJson)); // logs error and position
-
-function parseAndLog(json) {
-  var data = parse(json);
-
-  if (data === undefined) {
-    console.log("error message", parse.message); // error message from the last parse call
-
-    console.log("error position", parse.position); // error position in string
-  } else {
-    console.log("data", data);
-  }
-}
 },{"csvtojson":"node_modules/csvtojson/browser/browser.js","ajv/dist/jtd":"node_modules/ajv/dist/jtd.js"}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -14236,7 +14234,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62962" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64409" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

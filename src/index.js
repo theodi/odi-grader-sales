@@ -1,20 +1,20 @@
 import CsvToJson from "csvtojson";
 
-const Ajv = require("ajv/dist/jtd")
-const ajv = new Ajv() // options can be passed, e.g. {allErrors: true}
+const Ajv = require("ajv/dist/jtd");
+const ajv = new Ajv(); // options can be passed, e.g. {allErrors: true}
+
+
 const schema = {
   properties: {
-    foo: {type: "int32"}
+    OrderID: {type: "string"},
+    Booker: {type: "string"},
+    Value: {type: "float32"},
+    Rating: {type: "int32"}
   },
-  optionalProperties: {
-    bar: {type: "string"}
-  }
-}
-const serialize = ajv.compileSerializer(schema)
-const data = {
-  foo: 1,
-  bar: "abc"
-}
+  additionalProperties: true
+};
+
+const serialize = ajv.compileSerializer(schema);
 
 // fetch data
 let tableCols = [];
@@ -34,8 +34,8 @@ document.getElementById("import").onclick = function () {
       .fromString(e.target.result)
       .then((arr) => {
         let input = arr;
-        //console.log("array contents: ", arr); // if not ok, no values
-        // need to reshape this as list of lists
+        console.log("array contents: ", arr); // if not ok, no values
+        console.log("array contents 0: ", arr[0]);
 
         var col = [];
         var record = [];
@@ -51,10 +51,30 @@ document.getElementById("import").onclick = function () {
             var value = record[key];
             recordVals.push(value);
           }
-          //console.log('values extracted: ', recordVals);
           tableData.push(recordVals);
+
         }
-        console.log('data', tableData);
+        console.log('table data', tableData);
+        console.log(arr.length);
+        for (let i = 0; i < arr.length; i++) {
+          const validate = ajv.compile(schema)
+          //const data = {foo: 1, bar: "abc"}
+          const valid = validate(arr[i]);
+          if (!valid) console.log(validate.errors);
+          let msgs = document.getElementById("invalidMessages");
+          let colName = validate.errors[0]["instancePath"].slice(1,);
+          let colType = validate.errors[0]["keyword"];
+          let problem = validate.errors[0]["message"];
+          if (colType === "type") {
+            msgs.textContent = `"${colName}" ${colType} ${problem}.`;
+          } else if (validate.errors[0]["params"]["error"] === "missing") {
+            let missingCol = validate.errors[0]["params"]["missingProperty"];
+            msgs.textContent = `Cannot find required property "${missingCol}".`
+          }
+
+
+        }
+
 
         for (var i = 0; i < input.length; i++) {
           for (var key in input[i]) {
@@ -63,44 +83,22 @@ document.getElementById("import").onclick = function () {
             }
           }
         }
-        //console.log("cols", col);
         for (var i in col) {
           tableHeader.push({title: col[i]});
         }
-
-        console.log('header', tableHeader);
-
-
         $(document).ready(function () {
             $('#example').DataTable({
-              "dom": '<"wrapper"iprt>',
+              "dom": '<"top"ip>rt<"clear">',
               data: tableData, // extract this from input file
               columns: tableHeader,
             });
         });
-
-
-
       })}
     let myData = fr.readAsText(files.item(0));
-    //return myData;
+
+
+
+
 
 
   };
-
-console.log(serialize(data))
-const parse = ajv.compileParser(schema)
-const json = '{"foo": 1, "bar": "abc"}'
-const invalidJson = '{"unknown": "abc"}'
-console.log("parse and log valid here", parseAndLog(json)) // logs {foo: 1, bar: "abc"}
-console.log("parse and log invalid here", parseAndLog(invalidJson)) // logs error and position
-
-function parseAndLog(json) {
-  const data = parse(json)
-  if (data === undefined) {
-    console.log("error message", parse.message) // error message from the last parse call
-    console.log("error position", parse.position) // error position in string
-  } else {
-    console.log("data", data)
-  }
-}
