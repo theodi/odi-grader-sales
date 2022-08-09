@@ -1,2 +1,3 @@
 node_modules/
-.cache/02/526471013486c0e9d434ebe604d583.json
+**/.cache
+**/.history
