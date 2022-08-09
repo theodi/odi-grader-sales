@@ -87,7 +87,6 @@ document.getElementById("import").onclick = function () {
           tableHeader.push({title: col[i]});
         }
         $(document).ready(function () {
-          console.log(tableData,tableHeader);
             $('#example').DataTable({
               "dom": '<"top"ip>rt<"clear">',
               data: tableData, // extract this from input file

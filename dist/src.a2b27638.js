@@ -14194,6 +14194,7 @@ document.getElementById("import").onclick = function () {
       }
 
       $(document).ready(function () {
+        console.log(tableData, tableHeader);
         $('#example').DataTable({
           "dom": '<"top"ip>rt<"clear">',
           data: tableData,
@@ -14234,7 +14235,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64409" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50610" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

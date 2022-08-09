@@ -13,7 +13,7 @@ const schema = {
   },
   additionalProperties: true
 };
-
+const validate = ajv.compile(schema)
 const serialize = ajv.compileSerializer(schema);
 
 // fetch data
@@ -57,6 +57,7 @@ document.getElementById("import").onclick = function () {
         console.log('table data', tableData);
         console.log(arr.length);
         for (let i = 0; i < arr.length; i++) {
+          console.log(arr[i])
           const validate = ajv.compile(schema)
           //const data = {foo: 1, bar: "abc"}
           const valid = validate(arr[i]);
@@ -87,7 +88,6 @@ document.getElementById("import").onclick = function () {
           tableHeader.push({title: col[i]});
         }
         $(document).ready(function () {
-          console.log(tableData,tableHeader);
             $('#example').DataTable({
               "dom": '<"top"ip>rt<"clear">',
               data: tableData, // extract this from input file
